@@ -1,53 +1,45 @@
 # Sorting-Algorithms-Benchmark
 
-## Student Information
-- **Name:** Jamal Abdulnasser Shalabi (جمال عبدالناصر شلابي)
-- **University ID:** 3169116
-- **Section:** [YOUR SECTION]
+التحليل والمقارنة التطبيقية لأداء خوارزميات الترتيب (Selection, Insertion, Bubble, Merge, Quick) بلغة Java.
 
-## Description
-A Java program that measures the running time (in microseconds) of five sorting algorithms
-(Selection, Insertion, Bubble, Merge, Quick) on four input cases, with **N = 100,000** elements.
-Timing uses `System.nanoTime()` divided by 1000; only the sorting itself is timed
-(each algorithm works on an independent copy of the original array).
+## 1. البيانات الشخصية
 
-Source file: [`SortingBenchmark.java`](SortingBenchmark.java)
+| البيان | القيمة |
+|--------|--------|
+| اسم الطالب | جمال عبدالناصر شلابي |
+| الرقم الجامعي (رقم القيد) | 3169116 |
+| رقم الشعبة | [اكتب رقم الشعبة] |
 
-## Results (µs)
+## 2. جدول نتائج الأزمنة (N = 100,000)
 
-| Algorithm      | Random | Reversed | Partially Sorted (~80%) | Fully Sorted |
-|----------------|-------:|---------:|------------------------:|-------------:|
-| Selection Sort | 2,601,321 | 4,459,458 | 2,712,695 | 2,220,304 |
-| Insertion Sort | 622,534 | 1,307,059 | 137,876 | 101 |
-| Bubble Sort    | 17,739,714 | 8,845,295 | 7,926,353 | 147 |
-| Merge Sort     | 20,807 | 6,792 | 9,629 | 5,688 |
-| Quick Sort     | 8,638 | 3,759,833 | 8,010 | 4,752,695 |
+الزمن بالميكروثانية (µs)، وتم قياس زمن الترتيب فقط على نسخة مستقلة من المصفوفة لكل خوارزمية.
 
-## Chart
+| الخوارزمية | غير مرتبة (Random) | مرتبة عكسيًا (Reversed) | مرتبة جزئيًا (~80%) | مرتبة تمامًا (Sorted) |
+|------------|-------------------:|------------------------:|--------------------:|----------------------:|
+| Selection Sort | 2,601,321 µs | 4,459,458 µs | 2,712,695 µs | 2,220,304 µs |
+| Insertion Sort | 622,534 µs | 1,307,059 µs | 137,876 µs | 101 µs |
+| Bubble Sort | 17,739,714 µs | 8,845,295 µs | 7,926,353 µs | 147 µs |
+| Merge Sort | 20,807 µs | 6,792 µs | 9,629 µs | 5,688 µs |
+| Quick Sort | 8,638 µs | 3,759,833 µs | 8,010 µs | 4,752,695 µs |
+
+## 3. الرسم البياني للمقارنة
+
 ![Chart](chart.png)
 
-(Logarithmic Y axis, because the values range from ~100 µs to ~17,000,000 µs.)
+(المحور الرأسي بمقياس لوغاريتمي لأن الفروقات كبيرة جدًا بين الخوارزميات.)
 
-## Analysis and Discussion
+## 4. تحليل ومناقشة النتائج
 
-### 1. O(N²) vs O(N log N)
-Selection, Insertion and Bubble Sort take roughly N² = 10¹⁰ basic steps for N = 100,000,
-while Merge and Quick Sort take about N·log₂N ≈ 1.7·10⁶ steps. In the random case this
-means Merge/Quick Sort finish in milliseconds, while Bubble Sort needs many seconds:
-a difference of hundreds to thousands of times. Bubble Sort is the slowest because it
-performs the most swaps.
+### أ) مقارنة O(N²) مع O(N log N)
+خوارزميات Selection وInsertion وBubble تحتاج تقريبًا N² = 10¹⁰ عملية عند N = 100,000،
+بينما Merge وQuick تحتاج حوالي N·log₂N ≈ 1.7×10⁶ عملية فقط. لذلك في الحالة العشوائية
+تنتهي Merge وQuick في أجزاء من الثانية (حوالي 10–20 ميلي ثانية)، بينما تحتاج Bubble إلى
+عدة ثوانٍ (حوالي 17 ثانية)، أي أبطأ بمئات إلى آلاف المرات. وBubble هي الأبطأ لأنها تُجري
+أكبر عدد من عمليات التبديل.
 
-### 2. Best algorithm for sorted and partially sorted data
-**Insertion Sort** is the best. On fully sorted data each element is compared only once
-with its left neighbour, so it runs in O(N) (about 100 µs). On ~80% sorted data every
-element is only a short distance from its place, so the number of shifts is small
-and it is much faster than on random data. Bubble Sort is also fast on fully sorted data
-only because of the early-exit flag (`swapped`), but it is slow on partially sorted data.
-Selection Sort does not benefit at all: it always scans the whole remaining array to find the minimum.
-
-### 3. Quick Sort on reversed / fully sorted data and the pivot
-This implementation uses the **last element as the pivot**. On sorted or reversed data the
-pivot is always the largest or smallest element, so each partition splits the array into
-N-1 elements and 0 elements. The recursion depth becomes N and the total work grows to
-O(N²), which is why Quick Sort jumps from ~8,000 µs to millions of µs.
-Choosing a random pivot or the median of three (first, middle, last) avoids this worst case.
+### ب) أفضل خوارزمية للبيانات المرتبة والمرتبة جزئيًا
+**Insertion Sort** هي الأفضل. في المصفوفة المرتبة تمامًا يُقارَن كل عنصر مرة واحدة فقط مع
+جاره، فيصبح التعقيد O(N) والزمن حوالي 101 µs. وفي المرتبة جزئيًا (~80%) كل عنصر قريب
+من مكانه الصحيح فعدد الإزاحات قليل، لذلك أسرع بكثير من الحالة العشوائية.
+أما Bubble فسريعة في المرتبة تمامًا فقط بسبب الخروج المبكر (`swapped`) لكنها بطيئة في
+المرتبة جزئيًا. وSelection لا تستفيد إطلاقًا لأنها تفحص كل العناصر
